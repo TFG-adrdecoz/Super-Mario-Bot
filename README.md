@@ -1,0 +1,2 @@
+# Super-Mario-Bot
+En este proyecto nos encargaremos de crear una Inteligencia Artificial capaz de superar de forma eficiente y exitosa cualquier nivel original o generado artificialmente de Super Mario Bros. Para ello, emplearemos máquinas de estado finitas que definirán el comportamiento del sistema. Para la gestión de transiciones entre los distintos estados, implementaremos algoritmos evolutivos que maximicen el tiempo restante al llegar a la meta.
