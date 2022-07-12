@@ -15,7 +15,8 @@ public class PlayLevel {
         System.out.println("Lives: " + result.getCurrentLives() + " Coins: " + result.getCurrentCoins() +
                 " Remaining Time: " + (int) Math.ceil(result.getRemainingTime() / 1000f));
         System.out.println("Mario State: " + result.getMarioMode() +
-                " (Mushrooms: " + result.getNumCollectedMushrooms() + " Fire Flowers: " + result.getNumCollectedFireflower() + ")");
+                " (Mushrooms: " + result.getNumCollectedMushrooms() + " Fire Flowers: "
+                + result.getNumCollectedFireflower() + ")");
         System.out.println("Total Kills: " + result.getKillsTotal() + " (Stomps: " + result.getKillsByStomp() +
                 " Fireballs: " + result.getKillsByFire() + " Shells: " + result.getKillsByShell() +
                 " Falls: " + result.getKillsByFall() + ")");
@@ -35,7 +36,8 @@ public class PlayLevel {
 
     public static void main(String[] args) {
         MarioGame game = new MarioGame();
-        // printResults(game.playGame(getLevel("../levels/original/lvl-1.txt"), 200, 0));
-        printResults(game.runGame(new org.mario.ai.agents.robinBaumgarten.Agent(), getLevel("./levels/original/lvl-1.txt"), 20, 0, true));
+        printResults(game.playGame(getLevel("./levels/original/lvl-1.txt"), 200, 0));
+        // printResults(game.runGame(new org.mario.ai.agents.crafty.Agent(),
+        //         getLevel("./levels/original/lvl-1.txt"), 20, 0, true));
     }
 }

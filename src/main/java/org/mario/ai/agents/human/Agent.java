@@ -9,16 +9,16 @@ import org.mario.ai.engine.core.MarioTimer;
 import org.mario.ai.engine.helper.MarioActions;
 
 public class Agent extends KeyAdapter implements MarioAgent {
-    private boolean[] actions = null;
+    private boolean[] actiones = null;
 
     @Override
     public void initialize(MarioForwardModel model, MarioTimer timer) {
-        actions = new boolean[MarioActions.numberOfActions()];
+        actiones = new boolean[MarioActions.numberOfActions()];
     }
 
     @Override
     public boolean[] getActions(MarioForwardModel model, MarioTimer timer) {
-        return actions;
+        return actiones;
     }
 
     @Override
@@ -37,24 +37,24 @@ public class Agent extends KeyAdapter implements MarioAgent {
     }
 
     private void toggleKey(int keyCode, boolean isPressed) {
-        if (this.actions == null) {
+        if (this.actiones == null) {
             return;
         }
         switch (keyCode) {
             case KeyEvent.VK_LEFT:
-                this.actions[MarioActions.LEFT.getValue()] = isPressed;
+                this.actiones[MarioActions.LEFT.getValue()] = isPressed;
                 break;
             case KeyEvent.VK_RIGHT:
-                this.actions[MarioActions.RIGHT.getValue()] = isPressed;
+                this.actiones[MarioActions.RIGHT.getValue()] = isPressed;
                 break;
             case KeyEvent.VK_DOWN:
-                this.actions[MarioActions.DOWN.getValue()] = isPressed;
+                this.actiones[MarioActions.DOWN.getValue()] = isPressed;
                 break;
             case KeyEvent.VK_S:
-                this.actions[MarioActions.JUMP.getValue()] = isPressed;
+                this.actiones[MarioActions.JUMP.getValue()] = isPressed;
                 break;
             case KeyEvent.VK_A:
-                this.actions[MarioActions.SPEED.getValue()] = isPressed;
+                this.actiones[MarioActions.SPEED.getValue()] = isPressed;
                 break;
         }
     }

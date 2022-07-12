@@ -2,10 +2,10 @@ package org.mario.ai.engine.core;
 
 import java.awt.image.VolatileImage;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.awt.*;
+import javax.swing.*;
 import java.awt.event.KeyAdapter;
-
-import javax.swing.JFrame;
 
 import org.mario.ai.agents.human.Agent;
 import org.mario.ai.engine.helper.GameStatus;
@@ -51,8 +51,10 @@ public class MarioGame {
      */
     private MarioEvent[] killEvents;
 
-    //visualization
+    // visualization
     private JFrame window = null;
+    private JEditorPane metricas = null;
+    private JEditorPane grid = null;
     private MarioRender render = null;
     private MarioAgent agent = null;
     private MarioWorld world = null;
@@ -65,7 +67,8 @@ public class MarioGame {
     }
 
     /**
-     * Create a mario game with a different forward model where the player on certain event
+     * Create a mario game with a different forward model where the player on
+     * certain event
      *
      * @param killEvents events that will kill the player
      */
@@ -90,8 +93,12 @@ public class MarioGame {
     /**
      * Play a certain mario level
      *
-     * @param level a string that constitutes the mario level, it uses the same representation as the VGLC but with more details. for more details about each symbol check the json file in the levels folder.
-     * @param timer number of ticks for that level to be played. Setting timer to anything &lt;=0 will make the time infinite
+     * @param level a string that constitutes the mario level, it uses the same
+     *              representation as the VGLC but with more details. for more
+     *              details about each symbol check the json file in the levels
+     *              folder.
+     * @param timer number of ticks for that level to be played. Setting timer to
+     *              anything &lt;=0 will make the time infinite
      * @return statistics about the current game
      */
     public MarioResult playGame(String level, int timer) {
@@ -101,9 +108,14 @@ public class MarioGame {
     /**
      * Play a certain mario level
      *
-     * @param level      a string that constitutes the mario level, it uses the same representation as the VGLC but with more details. for more details about each symbol check the json file in the levels folder.
-     * @param timer      number of ticks for that level to be played. Setting timer to anything &lt;=0 will make the time infinite
-     * @param marioState the initial state that mario appears in. 0 small mario, 1 large mario, and 2 fire mario.
+     * @param level      a string that constitutes the mario level, it uses the same
+     *                   representation as the VGLC but with more details. for more
+     *                   details about each symbol check the json file in the levels
+     *                   folder.
+     * @param timer      number of ticks for that level to be played. Setting timer
+     *                   to anything &lt;=0 will make the time infinite
+     * @param marioState the initial state that mario appears in. 0 small mario, 1
+     *                   large mario, and 2 fire mario.
      * @return statistics about the current game
      */
     public MarioResult playGame(String level, int timer, int marioState) {
@@ -113,10 +125,16 @@ public class MarioGame {
     /**
      * Play a certain mario level
      *
-     * @param level      a string that constitutes the mario level, it uses the same representation as the VGLC but with more details. for more details about each symbol check the json file in the levels folder.
-     * @param timer      number of ticks for that level to be played. Setting timer to anything &lt;=0 will make the time infinite
-     * @param marioState the initial state that mario appears in. 0 small mario, 1 large mario, and 2 fire mario.
-     * @param fps        the number of frames per second that the update function is following
+     * @param level      a string that constitutes the mario level, it uses the same
+     *                   representation as the VGLC but with more details. for more
+     *                   details about each symbol check the json file in the levels
+     *                   folder.
+     * @param timer      number of ticks for that level to be played. Setting timer
+     *                   to anything &lt;=0 will make the time infinite
+     * @param marioState the initial state that mario appears in. 0 small mario, 1
+     *                   large mario, and 2 fire mario.
+     * @param fps        the number of frames per second that the update function is
+     *                   following
      * @return statistics about the current game
      */
     public MarioResult playGame(String level, int timer, int marioState, int fps) {
@@ -126,11 +144,18 @@ public class MarioGame {
     /**
      * Play a certain mario level
      *
-     * @param level      a string that constitutes the mario level, it uses the same representation as the VGLC but with more details. for more details about each symbol check the json file in the levels folder.
-     * @param timer      number of ticks for that level to be played. Setting timer to anything &lt;=0 will make the time infinite
-     * @param marioState the initial state that mario appears in. 0 small mario, 1 large mario, and 2 fire mario.
-     * @param fps        the number of frames per second that the update function is following
-     * @param scale      the screen scale, that scale value is multiplied by the actual width and height
+     * @param level      a string that constitutes the mario level, it uses the same
+     *                   representation as the VGLC but with more details. for more
+     *                   details about each symbol check the json file in the levels
+     *                   folder.
+     * @param timer      number of ticks for that level to be played. Setting timer
+     *                   to anything &lt;=0 will make the time infinite
+     * @param marioState the initial state that mario appears in. 0 small mario, 1
+     *                   large mario, and 2 fire mario.
+     * @param fps        the number of frames per second that the update function is
+     *                   following
+     * @param scale      the screen scale, that scale value is multiplied by the
+     *                   actual width and height
      * @return statistics about the current game
      */
     public MarioResult playGame(String level, int timer, int marioState, int fps, float scale) {
@@ -141,8 +166,12 @@ public class MarioGame {
      * Run a certain mario level with a certain agent
      *
      * @param agent the current AI agent used to play the game
-     * @param level a string that constitutes the mario level, it uses the same representation as the VGLC but with more details. for more details about each symbol check the json file in the levels folder.
-     * @param timer number of ticks for that level to be played. Setting timer to anything &lt;=0 will make the time infinite
+     * @param level a string that constitutes the mario level, it uses the same
+     *              representation as the VGLC but with more details. for more
+     *              details about each symbol check the json file in the levels
+     *              folder.
+     * @param timer number of ticks for that level to be played. Setting timer to
+     *              anything &lt;=0 will make the time infinite
      * @return statistics about the current game
      */
     public MarioResult runGame(MarioAgent agent, String level, int timer) {
@@ -153,9 +182,14 @@ public class MarioGame {
      * Run a certain mario level with a certain agent
      *
      * @param agent      the current AI agent used to play the game
-     * @param level      a string that constitutes the mario level, it uses the same representation as the VGLC but with more details. for more details about each symbol check the json file in the levels folder.
-     * @param timer      number of ticks for that level to be played. Setting timer to anything &lt;=0 will make the time infinite
-     * @param marioState the initial state that mario appears in. 0 small mario, 1 large mario, and 2 fire mario.
+     * @param level      a string that constitutes the mario level, it uses the same
+     *                   representation as the VGLC but with more details. for more
+     *                   details about each symbol check the json file in the levels
+     *                   folder.
+     * @param timer      number of ticks for that level to be played. Setting timer
+     *                   to anything &lt;=0 will make the time infinite
+     * @param marioState the initial state that mario appears in. 0 small mario, 1
+     *                   large mario, and 2 fire mario.
      * @return statistics about the current game
      */
     public MarioResult runGame(MarioAgent agent, String level, int timer, int marioState) {
@@ -166,9 +200,14 @@ public class MarioGame {
      * Run a certain mario level with a certain agent
      *
      * @param agent      the current AI agent used to play the game
-     * @param level      a string that constitutes the mario level, it uses the same representation as the VGLC but with more details. for more details about each symbol check the json file in the levels folder.
-     * @param timer      number of ticks for that level to be played. Setting timer to anything &lt;=0 will make the time infinite
-     * @param marioState the initial state that mario appears in. 0 small mario, 1 large mario, and 2 fire mario.
+     * @param level      a string that constitutes the mario level, it uses the same
+     *                   representation as the VGLC but with more details. for more
+     *                   details about each symbol check the json file in the levels
+     *                   folder.
+     * @param timer      number of ticks for that level to be played. Setting timer
+     *                   to anything &lt;=0 will make the time infinite
+     * @param marioState the initial state that mario appears in. 0 small mario, 1
+     *                   large mario, and 2 fire mario.
      * @param visuals    show the game visuals if it is true and false otherwise
      * @return statistics about the current game
      */
@@ -180,11 +219,17 @@ public class MarioGame {
      * Run a certain mario level with a certain agent
      *
      * @param agent      the current AI agent used to play the game
-     * @param level      a string that constitutes the mario level, it uses the same representation as the VGLC but with more details. for more details about each symbol check the json file in the levels folder.
-     * @param timer      number of ticks for that level to be played. Setting timer to anything &lt;=0 will make the time infinite
-     * @param marioState the initial state that mario appears in. 0 small mario, 1 large mario, and 2 fire mario.
+     * @param level      a string that constitutes the mario level, it uses the same
+     *                   representation as the VGLC but with more details. for more
+     *                   details about each symbol check the json file in the levels
+     *                   folder.
+     * @param timer      number of ticks for that level to be played. Setting timer
+     *                   to anything &lt;=0 will make the time infinite
+     * @param marioState the initial state that mario appears in. 0 small mario, 1
+     *                   large mario, and 2 fire mario.
      * @param visuals    show the game visuals if it is true and false otherwise
-     * @param fps        the number of frames per second that the update function is following
+     * @param fps        the number of frames per second that the update function is
+     *                   following
      * @return statistics about the current game
      */
     public MarioResult runGame(MarioAgent agent, String level, int timer, int marioState, boolean visuals, int fps) {
@@ -195,30 +240,51 @@ public class MarioGame {
      * Run a certain mario level with a certain agent
      *
      * @param agent      the current AI agent used to play the game
-     * @param level      a string that constitutes the mario level, it uses the same representation as the VGLC but with more details. for more details about each symbol check the json file in the levels folder.
-     * @param timer      number of ticks for that level to be played. Setting timer to anything &lt;=0 will make the time infinite
-     * @param marioState the initial state that mario appears in. 0 small mario, 1 large mario, and 2 fire mario.
+     * @param level      a string that constitutes the mario level, it uses the same
+     *                   representation as the VGLC but with more details. for more
+     *                   details about each symbol check the json file in the levels
+     *                   folder.
+     * @param timer      number of ticks for that level to be played. Setting timer
+     *                   to anything &lt;=0 will make the time infinite
+     * @param marioState the initial state that mario appears in. 0 small mario, 1
+     *                   large mario, and 2 fire mario.
      * @param visuals    show the game visuals if it is true and false otherwise
-     * @param fps        the number of frames per second that the update function is following
-     * @param scale      the screen scale, that scale value is multiplied by the actual width and height
+     * @param fps        the number of frames per second that the update function is
+     *                   following
+     * @param scale      the screen scale, that scale value is multiplied by the
+     *                   actual width and height
      * @return statistics about the current game
      */
-    public MarioResult runGame(MarioAgent agent, String level, int timer, int marioState, boolean visuals, int fps, float scale) {
+    public MarioResult runGame(MarioAgent agent, String level, int timer, int marioState, boolean visuals, int fps,
+            float scale) {
+
         if (visuals) {
-            this.window = new JFrame("Mario AI Framework");
-            this.render = new MarioRender(scale);
-            this.window.setContentPane(this.render);
+            this.window = new JFrame("Super Mario Bot");
+            this.render = new MarioRender(scale * 0.87f);
+            this.window.setLayout(new GridLayout(2, 2));
+
+            this.window.add(this.render);
+            this.metricas = new JEditorPane();
+            this.grid = new JEditorPane();
+
+            window.add(grid);
+            window.add(metricas);
+            window.add(new JButton("ESQUINA DERECHA ABAJO"));
+
             this.window.pack();
-            this.window.setResizable(false);
+            this.window.setResizable(true);
             this.window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             this.render.init();
+
             this.window.setVisible(true);
         }
         this.setAgent(agent);
-        return this.gameLoop(level, timer, marioState, visuals, fps);
+
+        return this.gameLoop(level, timer, marioState, visuals, fps, metricas);
     }
 
-    private MarioResult gameLoop(String level, int timer, int marioState, boolean visual, int fps) {
+    private MarioResult gameLoop(String level, int timer, int marioState, boolean visual, int fps,
+            JEditorPane metricas) {
         this.world = new MarioWorld(this.killEvents);
         this.world.visuals = visual;
         this.world.initializeLevel(level, 1000 * timer);
@@ -230,7 +296,7 @@ public class MarioGame {
         this.world.update(new boolean[MarioActions.numberOfActions()]);
         long currentTime = System.currentTimeMillis();
 
-        //initialize graphics
+        // initialize graphics
         VolatileImage renderTarget = null;
         Graphics backBuffer = null;
         Graphics currentBuffer = null;
@@ -247,12 +313,15 @@ public class MarioGame {
         ArrayList<MarioEvent> gameEvents = new ArrayList<>();
         ArrayList<MarioAgentEvent> agentEvents = new ArrayList<>();
         while (this.world.gameStatus == GameStatus.RUNNING) {
+            updateGrid(grid, world);
+            updateMetrics(metricas, new MarioResult(this.world, gameEvents, agentEvents));
             if (!this.pause) {
-                //get actions
+                // get actions
                 agentTimer = new MarioTimer(MarioGame.maxTime);
                 boolean[] actions = this.agent.getActions(new MarioForwardModel(this.world.clone()), agentTimer);
                 if (MarioGame.verbose) {
-                    if (agentTimer.getRemainingTime() < 0 && Math.abs(agentTimer.getRemainingTime()) > MarioGame.graceTime) {
+                    if (agentTimer.getRemainingTime() < 0
+                            && Math.abs(agentTimer.getRemainingTime()) > MarioGame.graceTime) {
                         System.out.println("The Agent is slowing down the game by: "
                                 + Math.abs(agentTimer.getRemainingTime()) + " msec.");
                     }
@@ -265,11 +334,11 @@ public class MarioGame {
                         this.world.mario.onGround, this.world.currentTick));
             }
 
-            //render world
+            // render world
             if (visual) {
                 this.render.renderWorld(this.world, renderTarget, backBuffer, currentBuffer);
             }
-            //check if delay needed
+            // check if delay needed
             if (this.getDelay(fps) > 0) {
                 try {
                     currentTime += this.getDelay(fps);
@@ -279,6 +348,50 @@ public class MarioGame {
                 }
             }
         }
-        return new MarioResult(this.world, gameEvents, agentEvents);
+        MarioResult result = new MarioResult(this.world, gameEvents, agentEvents);
+        updateGrid(grid, world);
+        updateMetrics(metricas, result);
+        return result;
+    }
+
+    private void updateMetrics(JEditorPane metricas, MarioResult result) {
+        metricas.setText("Game Status: " + result.getGameStatus().toString() +
+                "\nPercentage Completion: " + String.valueOf((int) Math.ceil(result.getCompletionPercentage() * 100))
+                + "%" + "\nLives: "
+                + String.valueOf(result.getCurrentLives()) + "\nCoins: " + String.valueOf(result.getCurrentCoins()) +
+                "\nRemaining Time: " + String.valueOf(result.getRemainingTime() / 1000) + "\nMario State: "
+                + String.valueOf(result.getMarioMode()) +
+                "\nMushrooms: " + String.valueOf(result.getNumCollectedMushrooms()) + "\nFire Flowers: "
+                + String.valueOf(result.getNumCollectedFireflower()) + "\nTotal Kills: "
+                + String.valueOf(result.getKillsTotal()) + "\nStomps: " + String.valueOf(result.getKillsByStomp()) +
+                "\nFireballs: " + String.valueOf(result.getKillsByFire()) + "\nShells: "
+                + String.valueOf(result.getKillsByShell()) +
+                "\nFalls: " + String.valueOf(result.getKillsByFall()) + "\nBricks: "
+                + String.valueOf(result.getNumDestroyedBricks()) + "\nJumps: "
+                + String.valueOf(result.getNumJumps()) +
+                "\nMax X Jump: " + String.valueOf(result.getMaxXJump()) + "\nMax Air Time: "
+                + String.valueOf(result.getMaxJumpAirTime()));
+    }
+
+    private void updateGrid(JEditorPane grid, MarioWorld world) {
+        System.out.println(this.world.mario.y);
+        int [][] scene = world.getSceneObservation(this.world.mario.x,
+        360-this.world.mario.y,1);
+        grid.setText(Arrays.deepToString(transposeMatrix(scene)).replace("], ", "]\n"));
+    }
+
+    public static int[][] transposeMatrix(int[][] matrix){
+        int m = matrix.length;
+        int n = matrix[0].length;
+    
+        int[][] transposedMatrix = new int[n][m];
+    
+        for(int x = 0; x < n; x++) {
+            for(int y = 0; y < m; y++) {
+                transposedMatrix[x][y] = matrix[y][x];
+            }
+        }
+    
+        return transposedMatrix;
     }
 }

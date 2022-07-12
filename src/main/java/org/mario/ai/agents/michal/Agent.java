@@ -61,6 +61,7 @@ public class Agent implements MarioAgent {
         for (int i = 0; i > -2; i--) {
             for (int j = 1; j < 2; j++) {
                 if (getLocation(j, i, enemies) > 1) {
+                    System.out.println("ENEMIGO CERCA");
                     return true;
                 }
             }
@@ -72,7 +73,6 @@ public class Agent implements MarioAgent {
     public boolean[] getActions(MarioForwardModel model, MarioTimer timer) {
         int[][] scene = model.getMarioSceneObservation();
         int[][] enemies = model.getMarioEnemiesObservation();
-
         if (enemyInFront(enemies)) {
             if (shootCounter > 0) {
                 action[MarioActions.SPEED.getValue()] = false;
@@ -98,6 +98,7 @@ public class Agent implements MarioAgent {
                 break;
 
             case WALK_FORWARD:
+            
                 action[MarioActions.LEFT.getValue()] = false;
                 if (thereIsHole(scene)) {
                     state = STATE.JUMP_HOLE;

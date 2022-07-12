@@ -10,6 +10,15 @@ public class MarioResult {
     private MarioWorld world;
     private ArrayList<MarioEvent> gameEvents;
     private ArrayList<MarioAgentEvent> agentEvents;
+    private float completed = 0.0f;
+
+    public float getCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(float completed) {
+        this.completed = completed;
+    }
 
     /**
      * Create a mario result object
@@ -39,7 +48,12 @@ public class MarioResult {
      * @return value between 0 to 1 to indicate the percentage of distance traversed
      */
     public float getCompletionPercentage() {
-        return this.world.mario.x / (this.world.level.exitTileX * 16);
+        // System.out.println(completed);
+        if (this.world.mario.x / (this.world.level.exitTileX * 16)>completed){
+            setCompleted(this.world.mario.x / (this.world.level.exitTileX * 16));
+        }
+        // System.out.println(completed);
+        return completed;
     }
 
     /**
