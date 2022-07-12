@@ -3,6 +3,7 @@ package org.mario.ai.engine.core;
 import java.awt.image.VolatileImage;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.KeyAdapter;
@@ -59,6 +60,8 @@ public class MarioGame {
     private MarioAgent agent = null;
     private MarioWorld world = null;
     private MarioResult result = new MarioResult(world, new ArrayList<>(), new ArrayList<>());
+    private TestPane gridColor =null;
+
     /**
      * Create a mario game to be played
      */
@@ -236,6 +239,24 @@ public class MarioGame {
         return this.runGame(agent, level, timer, marioState, visuals, fps, 2);
     }
 
+    public class TestPane extends JPanel {
+
+        public TestPane() {
+            setLayout(new GridLayout(16, 16, 1, 1));
+            // Random rnd = new Random();
+            // Color[] colors = new Color[] { Color.GREEN, Color.BLUE, Color.RED, Color.MAGENTA };
+            // for (int col = 0; col < 16; col++) {
+            //     for (int row = 0; row < 16; row++) {
+            //         JPanel cell = new JPanel();
+            //         int color = rnd.nextInt(4);
+            //         cell.setBackground(colors[color]);
+            //         add(cell);
+            //     }
+            // }
+        }
+
+    }
+
     /**
      * Run a certain mario level with a certain agent
      *
@@ -261,16 +282,19 @@ public class MarioGame {
         if (visuals) {
             this.window = new JFrame("Super Mario Bot");
             this.render = new MarioRender(scale * 0.87f);
+
             this.window.setLayout(new GridLayout(2, 2));
 
             this.window.add(this.render);
             this.metricas = new JEditorPane();
-            metricas.setEditable(false           );
+            metricas.setFocusable(false);
+            metricas.setEditable(false);
             this.grid = new JEditorPane();
-
-            window.add(grid);
+            grid.setFocusable(false);
+            this.gridColor = new TestPane();
+            window.add(gridColor);
             window.add(metricas);
-            window.add(new JButton("ESQUINA DERECHA ABAJO"));
+            window.add(grid);
 
             this.window.pack();
             this.window.setResizable(true);
@@ -314,11 +338,12 @@ public class MarioGame {
         ArrayList<MarioEvent> gameEvents = new ArrayList<>();
         ArrayList<MarioAgentEvent> agentEvents = new ArrayList<>();
         while (this.world.gameStatus == GameStatus.RUNNING) {
-            updateGrid(grid, world);
-        this.result.setWorld(world);
-        this.result.setGameEvents(gameEvents);
-        this.result.setAgentEvents(agentEvents);
-            updateMetrics(metricas, this.result);
+            updateGrid(world);
+            updateGridColor(world);
+            this.result.setWorld(world);
+            this.result.setGameEvents(gameEvents);
+            this.result.setAgentEvents(agentEvents);
+            updateMetrics(this.result);
             if (!this.pause) {
                 // get actions
                 agentTimer = new MarioTimer(MarioGame.maxTime);
@@ -353,12 +378,12 @@ public class MarioGame {
             }
         }
         MarioResult result = new MarioResult(this.world, gameEvents, agentEvents);
-        updateGrid(grid, world);
-        updateMetrics(metricas, result);
+        updateGrid(world);
+        updateMetrics(result);
         return result;
     }
 
-    private void updateMetrics(JEditorPane metricas, MarioResult result) {
+    private void updateMetrics(MarioResult result) {
         metricas.setText("Game Status: " + result.getGameStatus().toString() +
                 "\nPercentage Completion: " + String.valueOf((int) Math.ceil(result.getCompletionPercentage() * 100))
                 + "%" + "\nLives: "
@@ -377,25 +402,44 @@ public class MarioGame {
                 + String.valueOf(result.getMaxJumpAirTime()));
     }
 
-    private void updateGrid(JEditorPane grid, MarioWorld world) {
-        System.out.println(this.world.mario.y);
-        int [][] scene = world.getSceneObservation(this.world.mario.x,
-        360-this.world.mario.y,1);
-        grid.setText(Arrays.deepToString(transposeMatrix(scene)).replace("], ", "]\n"));
+    private void updateGrid(MarioWorld world) {
+        int[][] scene = world.getMergedObservation(this.world.mario.x,
+                360 - this.world.mario.y, 1, 1);
+        this.grid.setText("\n\n\n"+Arrays.deepToString(transposeMatrix(scene)).replace("], ", "]\n").replace("0", "00")
+                .replace("[", "").replace("]", ""));
     }
 
-    public static int[][] transposeMatrix(int[][] matrix){
+    private void updateGridColor(MarioWorld world) {
+        this.gridColor=new TestPane();
+        int[][] scene = world.getMergedObservation(this.world.mario.x,
+                360 - this.world.mario.y, 1, 1);
+        for (int row = 0; row < scene.length; row++) {
+            for (int col = 0; col < scene.length; col++) {
+                JPanel cell = new JPanel();
+                if(scene[row][col]==17){
+                    cell.setBackground(Color.GREEN);
+                }
+                else{
+                    cell.setBackground(Color.WHITE);
+                }            
+                
+                this.gridColor.add(cell);
+            }
+        }
+    }
+
+    public static int[][] transposeMatrix(int[][] matrix) {
         int m = matrix.length;
         int n = matrix[0].length;
-    
+
         int[][] transposedMatrix = new int[n][m];
-    
-        for(int x = 0; x < n; x++) {
-            for(int y = 0; y < m; y++) {
+
+        for (int x = 0; x < n; x++) {
+            for (int y = 0; y < m; y++) {
                 transposedMatrix[x][y] = matrix[y][x];
             }
         }
-    
+
         return transposedMatrix;
     }
 }
