@@ -8,6 +8,14 @@ import org.mario.ai.engine.helper.SpriteType;
 
 public class MarioResult {
     private MarioWorld world;
+    public MarioWorld getWorld() {
+        return world;
+    }
+
+    public void setWorld(MarioWorld world) {
+        this.world = world;
+    }
+
     private ArrayList<MarioEvent> gameEvents;
     private ArrayList<MarioAgentEvent> agentEvents;
     private float completed = 0.0f;
@@ -30,6 +38,14 @@ public class MarioResult {
     public MarioResult(MarioWorld world, ArrayList<MarioEvent> gameEvents, ArrayList<MarioAgentEvent> agentEvents) {
         this.world = world;
         this.gameEvents = gameEvents;
+        this.agentEvents = agentEvents;
+    }
+
+    public void setGameEvents(ArrayList<MarioEvent> gameEvents) {
+        this.gameEvents = gameEvents;
+    }
+
+    public void setAgentEvents(ArrayList<MarioAgentEvent> agentEvents) {
         this.agentEvents = agentEvents;
     }
 

@@ -58,7 +58,7 @@ public class MarioGame {
     private MarioRender render = null;
     private MarioAgent agent = null;
     private MarioWorld world = null;
-
+    private MarioResult result = new MarioResult(world, new ArrayList<>(), new ArrayList<>());
     /**
      * Create a mario game to be played
      */
@@ -265,6 +265,7 @@ public class MarioGame {
 
             this.window.add(this.render);
             this.metricas = new JEditorPane();
+            metricas.setEditable(false           );
             this.grid = new JEditorPane();
 
             window.add(grid);
@@ -314,7 +315,10 @@ public class MarioGame {
         ArrayList<MarioAgentEvent> agentEvents = new ArrayList<>();
         while (this.world.gameStatus == GameStatus.RUNNING) {
             updateGrid(grid, world);
-            updateMetrics(metricas, new MarioResult(this.world, gameEvents, agentEvents));
+        this.result.setWorld(world);
+        this.result.setGameEvents(gameEvents);
+        this.result.setAgentEvents(agentEvents);
+            updateMetrics(metricas, this.result);
             if (!this.pause) {
                 // get actions
                 agentTimer = new MarioTimer(MarioGame.maxTime);
