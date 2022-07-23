@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.Random;
+import java.util.zip.Inflater;
+
 import org.mario.ai.engine.core.MarioAgent;
+import org.mario.ai.engine.core.MarioGame;
 import org.mario.ai.engine.core.MarioForwardModel;
 import org.mario.ai.engine.core.MarioTimer;
 import org.mario.ai.engine.helper.MarioActions;
@@ -19,12 +22,16 @@ public class Agent implements MarioAgent {
     private boolean[] action;
     private States state;
 
-    public enum States {
-        AVANZO, SALTO
+    public States getState() {
+        return state;
     }
 
-    public enum Events {
-        ENEMIGOS, LIBRE
+    public void setState(States state) {
+        this.state = state;
+    }
+
+    public enum States {
+        AVANZO, SALTO, VOLANDO
     }
 
     @Override
@@ -38,7 +45,6 @@ public class Agent implements MarioAgent {
     private int getLocation(int relX, int relY, int[][] scene) {
         int realX = 8 + relX;
         int realY = 8 + relY;
-        // System.out.println(scene[realX][realY]);
         return scene[realX][realY];
     }
 
@@ -54,12 +60,11 @@ public class Agent implements MarioAgent {
         return false;
     }
 
-    private boolean thereIsHole(int[][] scene) {
-        int[] inFrontOf = new int[] { getLocation(1, 0, scene), getLocation(2, 0, scene), getLocation(2, -1, scene) };
-
+    private boolean thereIsHole(int[][] mundo) {
+        int[] inFrontOf = new int[] { mundo[14][9], mundo[14][10] };
         for (int i = 0; i < inFrontOf.length; i++) {
-            if (inFrontOf[i] == 34 || inFrontOf[i] == 17) {
-                System.out.println("HAY HOLE CERCA");
+            if (inFrontOf[i] == 0) {
+                // System.out.println("HAY HOLE CERCA");
                 return true;
             }
         }
@@ -68,11 +73,12 @@ public class Agent implements MarioAgent {
     }
 
     private boolean thereIsObstacle(int[][] scene) {
-        int[] inFrontOf = new int[] { getLocation(1, 0, scene), getLocation(2, 0, scene), getLocation(2, -1, scene) };
+        int[] inFrontOf = new int[] { getLocation(1, 0, scene), getLocation(2, 0, scene), getLocation(3, 0, scene),
+                getLocation(4, 0, scene), getLocation(5, 0, scene) };
 
         for (int i = 0; i < inFrontOf.length; i++) {
-            if (inFrontOf[i] == 17 || inFrontOf[i] == 23 || inFrontOf[i] == 24) {
-                System.out.println("OBSTACULO CERCA");
+            if (inFrontOf[i] == 17 || inFrontOf[i] == 23 || inFrontOf[i] == 24 || inFrontOf[i] == 34) {
+                // System.out.println("OBSTACULO CERCA");
                 return true;
             }
         }
@@ -82,33 +88,49 @@ public class Agent implements MarioAgent {
 
     @Override
     public boolean[] getActions(MarioForwardModel model, MarioTimer timer) {
-        // System.out.println(model.getMarioEnemiesObservation());
-        action[MarioActions.JUMP.getValue()] = true;
+        action[MarioActions.SPEED.getValue()] = true;
+        int[][] mundo = MarioGame.transposeMatrix(model.getScreenSceneObservation());
         int[][] scene = model.getMarioSceneObservation();
-        // System.out.println(Arrays.deepToString(scene).replace("], ", "]\n"));
         int[][] enemies = model.getMarioEnemiesObservation();
-        System.out.println(state);
-
-
         switch (state) {
             case AVANZO:
-                if (enemyInFront(enemies) || thereIsObstacle(scene) || thereIsHole(scene)) {
+                if (!model.isMarioOnGround()) {
+                    state = States.VOLANDO;
+                    break;
+                }
+                if (enemyInFront(enemies) || thereIsObstacle(scene) || thereIsHole(mundo)) {
                     state = States.SALTO;
                     break;
                 }
                 action[MarioActions.RIGHT.getValue()] = true;
                 action[MarioActions.JUMP.getValue()] = false;
-                action[MarioActions.SPEED.getValue()] = true;
+
                 break;
 
             case SALTO:
                 action[MarioActions.JUMP.getValue()] = true;
-                action[MarioActions.SPEED.getValue()] = false;
-                if (!enemyInFront(enemies) && !thereIsObstacle(scene) && !thereIsHole(scene)) {
-                    state = States.AVANZO;
+                if (!enemyInFront(enemies) && !thereIsObstacle(scene) && !thereIsHole(mundo)) {
+                    state = States.VOLANDO;
+                }
 
+                if (thereIsObstacle(scene)) {
+                    state = States.VOLANDO;
+                }
+
+                break;
+            case VOLANDO:
+                if (!model.isMarioOnGround()) {
+                    break;
+                }
+                action[MarioActions.JUMP.getValue()] = false;
+                action[MarioActions.RIGHT.getValue()] = true;
+                if (enemyInFront(enemies) || thereIsObstacle(scene) || thereIsHole(mundo)) {
+                    state = States.SALTO;
+                } else {
+                    state = States.AVANZO;
                 }
                 break;
+
         }
 
         return action;

@@ -60,7 +60,7 @@ public class MarioGame {
     private MarioAgent agent = null;
     private MarioWorld world = null;
     private MarioResult result = new MarioResult(world, new ArrayList<>(), new ArrayList<>());
-    private TestPane gridColor =null;
+    private TestPane gridColor = null;
 
     /**
      * Create a mario game to be played
@@ -243,16 +243,12 @@ public class MarioGame {
 
         public TestPane() {
             setLayout(new GridLayout(16, 16, 1, 1));
-            // Random rnd = new Random();
-            // Color[] colors = new Color[] { Color.GREEN, Color.BLUE, Color.RED, Color.MAGENTA };
-            // for (int col = 0; col < 16; col++) {
-            //     for (int row = 0; row < 16; row++) {
-            //         JPanel cell = new JPanel();
-            //         int color = rnd.nextInt(4);
-            //         cell.setBackground(colors[color]);
-            //         add(cell);
-            //     }
-            // }
+            for (int col = 0; col < 16; col++) {
+                for (int row = 0; row < 16; row++) {
+                    JPanel cell = new JPanel();
+                    add(cell);
+                }
+            }
         }
 
     }
@@ -338,12 +334,15 @@ public class MarioGame {
         ArrayList<MarioEvent> gameEvents = new ArrayList<>();
         ArrayList<MarioAgentEvent> agentEvents = new ArrayList<>();
         while (this.world.gameStatus == GameStatus.RUNNING) {
-            updateGrid(world);
-            updateGridColor(world);
-            this.result.setWorld(world);
-            this.result.setGameEvents(gameEvents);
-            this.result.setAgentEvents(agentEvents);
-            updateMetrics(this.result);
+            if(visual){
+                updateGrid(world);
+                updateGridColor(world);
+                this.result.setWorld(world);
+                this.result.setGameEvents(gameEvents);
+                this.result.setAgentEvents(agentEvents);
+                updateMetrics(this.result);
+            }
+            
             if (!this.pause) {
                 // get actions
                 agentTimer = new MarioTimer(MarioGame.maxTime);
@@ -378,8 +377,11 @@ public class MarioGame {
             }
         }
         MarioResult result = new MarioResult(this.world, gameEvents, agentEvents);
-        updateGrid(world);
-        updateMetrics(result);
+        if (visual) {
+            updateGrid(world);
+            updateMetrics(result);
+        }
+
         return result;
     }
 
@@ -404,26 +406,34 @@ public class MarioGame {
 
     private void updateGrid(MarioWorld world) {
         int[][] scene = world.getMergedObservation(this.world.mario.x,
-                360 - this.world.mario.y, 1, 1);
-        this.grid.setText("\n\n\n"+Arrays.deepToString(transposeMatrix(scene)).replace("], ", "]\n").replace("0", "00")
-                .replace("[", "").replace("]", ""));
+                140, 1, 1);
+        this.grid
+                .setText("\n\n\n" + Arrays.deepToString(transposeMatrix(scene)).replace("], ", "]\n").replace("0", "00")
+                        .replace("[", "").replace("]", ""));
     }
 
     private void updateGridColor(MarioWorld world) {
-        this.gridColor=new TestPane();
         int[][] scene = world.getMergedObservation(this.world.mario.x,
-                360 - this.world.mario.y, 1, 1);
-        for (int row = 0; row < scene.length; row++) {
-            for (int col = 0; col < scene.length; col++) {
-                JPanel cell = new JPanel();
-                if(scene[row][col]==17){
-                    cell.setBackground(Color.GREEN);
+                140, 2, 2);
+        int[][] transpose = transposeMatrix(scene);
+        for (int col = 0; col < transpose.length; col++) {
+            for (int row = 0; row < transpose.length; row++) {
+                int value = transpose[col][row];
+                if (value == 100) {
+                    this.gridColor.getComponent(row + 16 * col).setBackground(new Color(139, 69, 19));
+                } else if (value == 1) {
+                    this.gridColor.getComponent(row + 16 * col).setBackground(Color.red);
+                } else {
+                    this.gridColor.getComponent(row + 16 * col).setBackground(Color.WHITE);
                 }
-                else{
-                    cell.setBackground(Color.WHITE);
-                }            
-                
-                this.gridColor.add(cell);
+            }
+        }
+        if (world.mario.getMapX() < 8) {
+            this.gridColor.getComponent(world.mario.getMapX() + 16 * world.mario.getMapY()).setBackground(Color.blue);
+        } else {
+            this.gridColor.getComponent(8 + 16 * world.mario.getMapY()).setBackground(Color.blue);
+            if (world.mario.isLarge) {
+                this.gridColor.getComponent(8 + 16 * (world.mario.getMapY() - 1)).setBackground(Color.blue);
             }
         }
     }
