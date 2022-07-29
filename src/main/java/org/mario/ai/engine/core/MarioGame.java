@@ -3,7 +3,6 @@ package org.mario.ai.engine.core;
 import java.awt.image.VolatileImage;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Random;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.KeyAdapter;
