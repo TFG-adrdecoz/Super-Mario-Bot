@@ -101,7 +101,7 @@ public class Agent implements MarioAgent {
         int[][] mundo = MarioGame.transposeMatrix(model.getScreenSceneObservation());
         int[][] scene = model.getMarioSceneObservation();
         int[][] enemies = model.getMarioEnemiesObservation();
-        int gene = 0;
+        int gene = 10;
         // System.out.println(state);
         switch (state) {
             case AVANZO:
@@ -144,7 +144,7 @@ public class Agent implements MarioAgent {
                 getStateByGene(gene);
             }
         } else if (gt.chromosome().get(gene).allele().equals(2)) {
-            // CAMBIO SI ESTÁ EN TIERRA
+            // CAMBIO SI NO ESTÁ EN TIERRA
             if (!model.isMarioOnGround()) {
                 getStateByGene(gene);
             }
