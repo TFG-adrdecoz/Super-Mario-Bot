@@ -10,7 +10,7 @@ import org.mario.ai.engine.helper.MarioActions;
 
 // import org.springframework.statemachine.*;
 
-public class AgentCrafty implements MarioAgent {
+public class AgentCrafty2 implements MarioAgent {
     private boolean[] action;
     private States state;
 
@@ -23,7 +23,7 @@ public class AgentCrafty implements MarioAgent {
     }
 
     public enum States {
-        AVANZO, SALTO, VOLANDO, PLANTA
+        AVANZO, SALTO, VOLANDO
     }
 
     @Override
@@ -43,7 +43,7 @@ public class AgentCrafty implements MarioAgent {
     private boolean enemyBehind(int[][] enemies) {
         for (int j = -1; j < 1; j++) {
             if (getLocation(j, 0, enemies) > 1) {
-                System.out.println("ENEMIGO DETRAS");
+                // System.out.println("ENEMIGO DETRAS");
                 return true;
             }
         }
@@ -107,7 +107,7 @@ public class AgentCrafty implements MarioAgent {
                     || (inFrontOf4[i] == 0 && inFrontOf4[i + 1] == 8) || (inFrontOf5[i] == 0 && inFrontOf5[i + 1] == 8)
                     || (inFrontOf6[i] == 0 && inFrontOf6[i + 1] == 8)
                     || (inFrontOf7[i] == 0 && inFrontOf7[i + 1] == 8)) {
-                System.out.println("PLANTA FUERA");
+                // System.out.println("PLANTA FUERA");
                 action[MarioActions.RIGHT.getValue()] = false;
                 return true;
             }
@@ -133,7 +133,7 @@ public class AgentCrafty implements MarioAgent {
                     || (inFrontOf3[i] == 34 && inFrontOf3[i + 1] == 8)
                     || (inFrontOf4[i] == 34 && inFrontOf4[i + 1] == 8)
                     || (inFrontOf5[i] == 34 && inFrontOf5[i + 1] == 8)) {
-                System.out.println("PLANTA EN TUBO DENTRO");
+                // System.out.println("PLANTA EN TUBO DENTRO");
                 return true;
             }
         }
@@ -161,12 +161,7 @@ public class AgentCrafty implements MarioAgent {
         int[][] scene = model.getMarioSceneObservation();
         int[][] enemies = model.getMarioEnemiesObservation();
         int[][] completo = model.getMarioCompleteObservation();
-        action[MarioActions.SPEED.getValue()] = true;
-        // System.out.println(Arrays.deepToString(completo).replace("], ",
-        // "]\n").replace("0", "00")
-        // .replace("[", "").replace("]", ""));
-        // System.out.println("------------------------------------------------------------------------");
-        // System.out.println(state);
+        action[MarioActions.RIGHT.getValue()] = true;
         switch (state) {
             case AVANZO:
                 if ((enemyInFront(enemies) || thereIsObstacle(scene) || thereIsHole(mundo))
@@ -174,51 +169,36 @@ public class AgentCrafty implements MarioAgent {
                     state = States.SALTO;
                     break;
                 }
-                if (thereIsPlantFuera(completo)) {
-                    state = States.PLANTA;
-                    break;
-                }
                 action[MarioActions.JUMP.getValue()] = false;
 
                 break;
 
             case SALTO:
-                action[MarioActions.RIGHT.getValue()] = true;
                 action[MarioActions.JUMP.getValue()] = true;
-
-                if (!enemyInFront(enemies) && !thereIsObstacle(scene) && !thereIsHole(mundo)
-                        || thereIsObstacle(scene)) {
+                if ((!enemyInFront(enemies) && !thereIsHole(mundo)) || thereIsObstacle(scene)) {
                     state = States.VOLANDO;
                 }
                 break;
             case VOLANDO:
-                action[MarioActions.RIGHT.getValue()] = true;
-                if (thereIsPlantFuera(completo)) {
-                    state = States.PLANTA;
-                }
-                if (!model.isMarioOnGround()) {
+                action[MarioActions.JUMP.getValue()] = false;
+                if ((thereIsPlantFuera(completo) && enemyBehind(enemies))
+                        || (((enemyInFront(enemies) || thereIsObstacle(scene) || thereIsHole(mundo)))
+                                && model.isMarioOnGround())) {
+                    state = States.SALTO;
                     break;
                 }
-                action[MarioActions.JUMP.getValue()] = false;
-                if ((enemyInFront(enemies) || thereIsObstacle(scene) || thereIsHole(mundo))
-                && !thereIsPlantFuera(completo)) {
-                    state = States.SALTO;
-                } else {
+
+                if (model.isMarioOnGround()) {
                     state = States.AVANZO;
                 }
-                break;
-            case PLANTA:
-                action[MarioActions.RIGHT.getValue()] = false;
-                if (enemyBehind(enemies) || thereIsPlantDentro(completo)) {
-                    state = States.SALTO;
-                    break;
-                }
+                action[MarioActions.JUMP.getValue()] = true;
 
                 break;
 
         }
 
         return action;
+
     }
 
     @Override

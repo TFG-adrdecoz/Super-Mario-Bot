@@ -333,7 +333,7 @@ public class MarioGame {
         ArrayList<MarioEvent> gameEvents = new ArrayList<>();
         ArrayList<MarioAgentEvent> agentEvents = new ArrayList<>();
         while (this.world.gameStatus == GameStatus.RUNNING) {
-            if(visual){
+            if (visual) {
                 updateGrid(world);
                 updateGridColor(world);
                 this.result.setWorld(world);
@@ -341,7 +341,7 @@ public class MarioGame {
                 this.result.setAgentEvents(agentEvents);
                 updateMetrics(this.result);
             }
-            
+
             if (!this.pause) {
                 // get actions
                 agentTimer = new MarioTimer(MarioGame.maxTime);

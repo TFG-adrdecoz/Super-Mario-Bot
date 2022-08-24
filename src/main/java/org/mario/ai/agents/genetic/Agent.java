@@ -28,7 +28,7 @@ public class Agent implements MarioAgent {
     }
 
     public enum States {
-        AVANZO, SALTO, TRANSICION
+        AVANZO, SALTO, VOLANDO
     }
 
     @Override
@@ -49,6 +49,8 @@ public class Agent implements MarioAgent {
         for (int i = 0; i > -2; i--) {
             for (int j = 1; j < 4; j++) {
                 if (getLocation(j, i, enemies) > 1) {
+                    // action[MarioActions.SPEED.getValue()] = false;
+
                     // System.out.println("ENEMIGO CERCA");
                     return true;
                 }
@@ -69,12 +71,73 @@ public class Agent implements MarioAgent {
         return false;
     }
 
-    private boolean isFlying(int[][] scene) {
-        int[] inFrontOf = new int[] { getLocation(0, 1, scene), getLocation(0, 2, scene)};
+    private boolean thereIsPlantFuera(int[][] completo) {
 
-        for (int i = 0; i < inFrontOf.length; i++) {
-            if (inFrontOf[i] == 0 ) {
-                // System.out.println("VOLANDO");
+        int[] inFrontOf3 = new int[] { getLocation(1, -4, completo), getLocation(2, -4, completo),
+                getLocation(3, -4, completo), getLocation(4, -4, completo), getLocation(5, -4, completo),
+                getLocation(6, -4, completo) };
+        int[] inFrontOf1 = new int[] { getLocation(1, -3, completo), getLocation(2, -3, completo),
+                getLocation(3, -3, completo), getLocation(4, -3, completo), getLocation(5, -3, completo),
+                getLocation(6, -3, completo) };
+        int[] inFrontOf2 = new int[] { getLocation(1, -2, completo), getLocation(2, -2, completo),
+                getLocation(3, -2, completo), getLocation(4, -2, completo), getLocation(5, -2, completo),
+                getLocation(6, -2, completo) };
+        int[] inFrontOf5 = new int[] { getLocation(1, -1, completo), getLocation(2, -1, completo),
+                getLocation(3, -1, completo), getLocation(4, -1, completo), getLocation(5, -1, completo),
+                getLocation(6, -1, completo) };
+        int[] inFrontOf4 = new int[] { getLocation(1, 0, completo), getLocation(2, 0, completo),
+                getLocation(3, 0, completo), getLocation(4, 0, completo), getLocation(5, 0, completo),
+                getLocation(6, 0, completo) };
+        int[] inFrontOf7 = new int[] { getLocation(1, 2, completo), getLocation(2, 2, completo),
+                getLocation(3, 2, completo), getLocation(4, 2, completo), getLocation(5, 2, completo),
+                getLocation(6, 2, completo) };
+        int[] inFrontOf6 = new int[] { getLocation(1, 1, completo), getLocation(2, 1, completo),
+                getLocation(3, 1, completo), getLocation(4, 1, completo), getLocation(5, 1, completo),
+                getLocation(6, 1, completo) };
+
+        for (int i = 0; i < inFrontOf3.length - 1; i++) {
+            if ((inFrontOf1[i] == 0 && inFrontOf1[i + 1] == 8) || (inFrontOf2[i] == 0 && inFrontOf2[i + 1] == 8)
+                    || (inFrontOf3[i] == 0 && inFrontOf3[i + 1] == 8) || (inFrontOf3[i] == 0 && inFrontOf3[i + 1] == 8)
+                    || (inFrontOf4[i] == 0 && inFrontOf4[i + 1] == 8) || (inFrontOf5[i] == 0 && inFrontOf5[i + 1] == 8)
+                    || (inFrontOf6[i] == 0 && inFrontOf6[i + 1] == 8)
+                    || (inFrontOf7[i] == 0 && inFrontOf7[i + 1] == 8)) {
+                action[MarioActions.RIGHT.getValue()] = false;
+                return true;
+            }
+
+        }
+
+        return false;
+    }
+
+    private boolean thereIsPlantDentro(int[][] completo) {
+        int[] inFrontOf3 = new int[] { getLocation(1, -1, completo), getLocation(2, -1, completo),
+                getLocation(3, -1, completo), getLocation(4, -1, completo) };
+        int[] inFrontOf2 = new int[] { getLocation(1, -2, completo), getLocation(2, -2, completo),
+                getLocation(3, -2, completo), getLocation(4, -2, completo) };
+        int[] inFrontOf1 = new int[] { getLocation(1, -3, completo), getLocation(2, -3, completo),
+                getLocation(3, -3, completo), getLocation(4, -3, completo) };
+        int[] inFrontOf4 = new int[] { getLocation(1, -4, completo), getLocation(2, -4, completo),
+                getLocation(3, -4, completo), getLocation(4, -4, completo) };
+        int[] inFrontOf5 = new int[] { getLocation(1, -5, completo), getLocation(2, -5, completo),
+                getLocation(3, -5, completo), getLocation(4, -5, completo) };
+        for (int i = 0; i < inFrontOf3.length - 1; i++) {
+            if ((inFrontOf1[i] == 34 && inFrontOf1[i + 1] == 8) || (inFrontOf2[i] == 34 && inFrontOf2[i + 1] == 8)
+                    || (inFrontOf3[i] == 34 && inFrontOf3[i + 1] == 8)
+                    || (inFrontOf4[i] == 34 && inFrontOf4[i + 1] == 8)
+                    || (inFrontOf5[i] == 34 && inFrontOf5[i + 1] == 8)) {
+                // System.out.println("PLANTA EN TUBO DENTRO");
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean enemyBehind(int[][] enemies) {
+        for (int j = -1; j < 1; j++) {
+            if (getLocation(j, 0, enemies) > 1) {
+                // System.out.println("ENEMIGO DETRAS");
                 return true;
             }
         }
@@ -101,30 +164,29 @@ public class Agent implements MarioAgent {
         int[][] mundo = MarioGame.transposeMatrix(model.getScreenSceneObservation());
         int[][] scene = model.getMarioSceneObservation();
         int[][] enemies = model.getMarioEnemiesObservation();
-        int gene = 10;
+        int[][] completo = model.getMarioCompleteObservation();
+        action[MarioActions.RIGHT.getValue()] = true;
         // System.out.println(state);
         switch (state) {
             case AVANZO:
-                gene = getRandomNumber(0, 1);
-                evalGene(gene, mundo, scene, enemies, model);
-                action[MarioActions.JUMP.getValue()] = false;
-
-                break;
-
-            case SALTO:
-                action[MarioActions.JUMP.getValue()] = true;
-                evalGene(2, mundo, scene, enemies, model);
-
-                break;
-            case TRANSICION:
-                gene = getRandomNumber(3, 4);
-                if (isFlying(scene)) {
+                evalGene(0, mundo, scene, enemies, completo, model);
+                if (!state.equals(state.AVANZO)) {
                     break;
                 }
                 action[MarioActions.JUMP.getValue()] = false;
-
-                evalGene(gene, mundo, scene, enemies, model);
-
+                break;
+            case SALTO:
+                action[MarioActions.JUMP.getValue()] = true;
+                evalGene(1, mundo, scene, enemies, completo, model);
+                break;
+            case VOLANDO:
+                action[MarioActions.JUMP.getValue()] = false;
+                evalGene(2, mundo, scene, enemies, completo, model);
+                if (!state.equals(state.VOLANDO)) {
+                    break;
+                }
+                evalGene(3, mundo, scene, enemies, completo, model);
+                action[MarioActions.JUMP.getValue()] = true;
                 break;
 
         }
@@ -132,20 +194,26 @@ public class Agent implements MarioAgent {
         return action;
     }
 
-    public void evalGene(int gene, int[][] mundo, int[][] scene, int[][] enemies, MarioForwardModel model) {
+    public void evalGene(int gene, int[][] mundo, int[][] scene, int[][] enemies, int[][] completo,
+            MarioForwardModel model) {
+               
         if (gt.chromosome().get(gene).allele().equals(0)) {
-            // CAMBIO SI NO HAY ENEMIGO NI OBSTACULO
-            if (!enemyInFront(enemies) && !thereIsObstacle(scene) && !thereIsHole(mundo)) {
+            if ((enemyInFront(enemies) || thereIsObstacle(scene) || thereIsHole(mundo))
+                    && !thereIsPlantFuera(completo)) {
                 getStateByGene(gene);
             }
         } else if (gt.chromosome().get(gene).allele().equals(1)) {
-            // CAMBIO SI HAY ENEMIGO U OBSTACULO
-            if (enemyInFront(enemies) || thereIsObstacle(scene) || thereIsHole(mundo)) {
+            if ((!enemyInFront(enemies) && !thereIsHole(mundo)) || thereIsObstacle(scene)) {
                 getStateByGene(gene);
             }
         } else if (gt.chromosome().get(gene).allele().equals(2)) {
-            // CAMBIO SI NO ESTÁ EN TIERRA
-            if (!model.isMarioOnGround()) {
+            if ((thereIsPlantFuera(completo) && enemyBehind(enemies))
+                        || (((enemyInFront(enemies) || thereIsObstacle(scene) || thereIsHole(mundo)))
+                                && model.isMarioOnGround())){
+                getStateByGene(gene);
+            }
+        } else if (gt.chromosome().get(gene).allele().equals(3)) {
+            if (model.isMarioOnGround()) {
                 getStateByGene(gene);
             }
         }
@@ -158,16 +226,15 @@ public class Agent implements MarioAgent {
     public void getStateByGene(int gene) {
         if (gene == 3)
             state = States.AVANZO;
-        else if (gene == 0 || gene == 4)
+        else if (gene == 0 || gene == 2)
             state = States.SALTO;
-        else if (gene == 1 || gene == 2)
-            state = States.TRANSICION;
-
+        else if (gene == 1)
+            state = States.VOLANDO;
     }
 
     @Override
     public String getAgentName() {
-        return "CraftyAgent";
+        return "GeneticAgent";
     }
 
 }
