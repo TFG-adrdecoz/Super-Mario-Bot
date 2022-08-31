@@ -37,6 +37,6 @@ public class PlayLevel {
     public static void main(String[] args) {
         // printResults(new MarioGame().playGame(getLevel("./levels/original/lvl-4.txt"), 200, 0));
         printResults(new MarioGame().runGame(new org.mario.ai.agents.crafty.AgentCrafty(),
-        PlayLevel.getLevel("./levels/original/lvl-2.txt"), 20, 0, true));
+        PlayLevel.getLevel("./levels/original/lvl-2.txt"), 20, 0, false));
     }
 }

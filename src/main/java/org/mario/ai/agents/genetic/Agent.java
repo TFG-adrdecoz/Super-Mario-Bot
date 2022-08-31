@@ -28,7 +28,7 @@ public class Agent implements MarioAgent {
     }
 
     public enum States {
-        AVANZO, SALTO, VOLANDO
+        AVANZO, SALTO, VOLANDO, PLANTA
     }
 
     @Override
@@ -165,28 +165,47 @@ public class Agent implements MarioAgent {
         int[][] scene = model.getMarioSceneObservation();
         int[][] enemies = model.getMarioEnemiesObservation();
         int[][] completo = model.getMarioCompleteObservation();
-        action[MarioActions.RIGHT.getValue()] = true;
+        // action[MarioActions.SPEED.getValue()] = true;
+        // if (thereIsPlantFuera(completo)) {
+        // action[MarioActions.RIGHT.getValue()] = false;
+        // }
+
         // System.out.println(state);
         switch (state) {
             case AVANZO:
-                evalGene(0, mundo, scene, enemies, completo, model);
-                if (!state.equals(state.AVANZO)) {
-                    break;
+                for (int i = 0; i < 2; i++) {
+                    evalGene(i, mundo, scene, enemies, completo, model);
+                    if (!state.equals(state.AVANZO)) {
+                        break;
+                    }
                 }
                 action[MarioActions.JUMP.getValue()] = false;
                 break;
             case SALTO:
+                action[MarioActions.RIGHT.getValue()] = true;
                 action[MarioActions.JUMP.getValue()] = true;
-                evalGene(1, mundo, scene, enemies, completo, model);
+                evalGene(2, mundo, scene, enemies, completo, model);
                 break;
             case VOLANDO:
-                action[MarioActions.JUMP.getValue()] = false;
-                evalGene(2, mundo, scene, enemies, completo, model);
-                if (!state.equals(state.VOLANDO)) {
+                action[MarioActions.RIGHT.getValue()] = true;
+                evalGene(3, mundo, scene, enemies, completo, model);
+
+                if (!model.isMarioOnGround()) {
                     break;
                 }
-                evalGene(3, mundo, scene, enemies, completo, model);
-                action[MarioActions.JUMP.getValue()] = true;
+
+                action[MarioActions.JUMP.getValue()] = false;
+                for (int i = 4; i < 6; i++) {
+                    evalGene(i, mundo, scene, enemies, completo, model);
+                    if (state.equals(state.SALTO)) {
+                        break;
+                    }
+                }
+                break;
+
+            case PLANTA:
+                action[MarioActions.RIGHT.getValue()] = false;
+                evalGene(6, mundo, scene, enemies, completo, model);
                 break;
 
         }
@@ -196,27 +215,60 @@ public class Agent implements MarioAgent {
 
     public void evalGene(int gene, int[][] mundo, int[][] scene, int[][] enemies, int[][] completo,
             MarioForwardModel model) {
-               
         if (gt.chromosome().get(gene).allele().equals(0)) {
-            if ((enemyInFront(enemies) || thereIsObstacle(scene) || thereIsHole(mundo))
-                    && !thereIsPlantFuera(completo)) {
+            if ((enemyInFront(enemies) || thereIsObstacle(scene) || thereIsHole(mundo))) {
                 getStateByGene(gene);
             }
         } else if (gt.chromosome().get(gene).allele().equals(1)) {
-            if ((!enemyInFront(enemies) && !thereIsHole(mundo)) || thereIsObstacle(scene)) {
+            if (thereIsPlantFuera(completo)) {
                 getStateByGene(gene);
             }
         } else if (gt.chromosome().get(gene).allele().equals(2)) {
-            if ((thereIsPlantFuera(completo) && enemyBehind(enemies))
-                        || (((enemyInFront(enemies) || thereIsObstacle(scene) || thereIsHole(mundo)))
-                                && model.isMarioOnGround())){
+            if (!enemyInFront(enemies) && !thereIsObstacle(scene) && !thereIsHole(mundo)) {
                 getStateByGene(gene);
             }
         } else if (gt.chromosome().get(gene).allele().equals(3)) {
+            if (enemyBehind(enemies) || thereIsPlantDentro(completo)) {
+                getStateByGene(gene);
+            }
+        } else if (gt.chromosome().get(gene).allele().equals(4)) {
+            if (!model.isMarioOnGround()) {
+                getStateByGene(gene);
+            }
+        } else if (gt.chromosome().get(gene).allele().equals(5)) {
             if (model.isMarioOnGround()) {
                 getStateByGene(gene);
             }
+        } else if (gt.chromosome().get(gene).allele().equals(6)) {
+            if (!thereIsPlantFuera(completo)) {
+                getStateByGene(gene);
+            }
+        } else if (gt.chromosome().get(gene).allele().equals(7)) {
+            if (true) {
+                getStateByGene(gene);
+            }
         }
+        else if (gt.chromosome().get(gene).allele().equals(8)) {
+            if (enemyBehind(enemies) || enemyInFront(enemies)) {
+                getStateByGene(gene);
+            }
+        }
+        else if (gt.chromosome().get(gene).allele().equals(9)) {
+            if (thereIsPlantFuera(completo) && enemyBehind(enemies)) {
+                getStateByGene(gene);
+            }
+        }
+        else if (gt.chromosome().get(gene).allele().equals(10)) {
+            if (((enemyInFront(enemies) && thereIsObstacle(scene) && thereIsHole(mundo)))) {
+                getStateByGene(gene);
+            }
+        }
+        else if (gt.chromosome().get(gene).allele().equals(11)) {
+            if (!enemyInFront(enemies) || !thereIsObstacle(scene) || !thereIsHole(mundo)) {
+                getStateByGene(gene);
+            }
+        }
+        
     }
 
     public int getRandomNumber(int min, int max) {
@@ -224,12 +276,15 @@ public class Agent implements MarioAgent {
     }
 
     public void getStateByGene(int gene) {
-        if (gene == 3)
-            state = States.AVANZO;
-        else if (gene == 0 || gene == 2)
+        if (gene == 0 || gene == 4 || gene == 6)
             state = States.SALTO;
-        else if (gene == 1)
+        else if (gene == 2)
             state = States.VOLANDO;
+        else if (gene == 1 || gene == 3)
+            state = States.PLANTA;
+        else if (gene == 5)
+            state = States.AVANZO;
+
     }
 
     @Override
