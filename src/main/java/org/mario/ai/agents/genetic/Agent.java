@@ -49,9 +49,6 @@ public class Agent implements MarioAgent {
         for (int i = 0; i > -2; i--) {
             for (int j = 1; j < 4; j++) {
                 if (getLocation(j, i, enemies) > 1) {
-                    // action[MarioActions.SPEED.getValue()] = false;
-
-                    // System.out.println("ENEMIGO CERCA");
                     return true;
                 }
             }
@@ -63,16 +60,13 @@ public class Agent implements MarioAgent {
         int[] inFrontOf = new int[] { mundo[14][9], mundo[14][10] };
         for (int i = 0; i < inFrontOf.length; i++) {
             if (inFrontOf[i] == 0) {
-                // System.out.println("HAY HOLE CERCA");
                 return true;
             }
         }
-
         return false;
     }
 
     private boolean thereIsPlantFuera(int[][] completo) {
-
         int[] inFrontOf3 = new int[] { getLocation(1, -4, completo), getLocation(2, -4, completo),
                 getLocation(3, -4, completo), getLocation(4, -4, completo), getLocation(5, -4, completo),
                 getLocation(6, -4, completo) };
@@ -94,7 +88,6 @@ public class Agent implements MarioAgent {
         int[] inFrontOf6 = new int[] { getLocation(1, 1, completo), getLocation(2, 1, completo),
                 getLocation(3, 1, completo), getLocation(4, 1, completo), getLocation(5, 1, completo),
                 getLocation(6, 1, completo) };
-
         for (int i = 0; i < inFrontOf3.length - 1; i++) {
             if ((inFrontOf1[i] == 0 && inFrontOf1[i + 1] == 8) || (inFrontOf2[i] == 0 && inFrontOf2[i + 1] == 8)
                     || (inFrontOf3[i] == 0 && inFrontOf3[i + 1] == 8) || (inFrontOf3[i] == 0 && inFrontOf3[i + 1] == 8)
@@ -104,9 +97,7 @@ public class Agent implements MarioAgent {
                 action[MarioActions.RIGHT.getValue()] = false;
                 return true;
             }
-
         }
-
         return false;
     }
 
@@ -148,10 +139,8 @@ public class Agent implements MarioAgent {
     private boolean thereIsObstacle(int[][] scene) {
         int[] inFrontOf = new int[] { getLocation(1, 0, scene), getLocation(2, 0, scene), getLocation(3, 0, scene),
                 getLocation(4, 0, scene), getLocation(5, 0, scene) };
-
         for (int i = 0; i < inFrontOf.length; i++) {
             if (inFrontOf[i] == 17 || inFrontOf[i] == 23 || inFrontOf[i] == 24 || inFrontOf[i] == 34) {
-                // System.out.println("OBSTACULO CERCA");
                 return true;
             }
         }
@@ -165,12 +154,6 @@ public class Agent implements MarioAgent {
         int[][] scene = model.getMarioSceneObservation();
         int[][] enemies = model.getMarioEnemiesObservation();
         int[][] completo = model.getMarioCompleteObservation();
-        // action[MarioActions.SPEED.getValue()] = true;
-        // if (thereIsPlantFuera(completo)) {
-        // action[MarioActions.RIGHT.getValue()] = false;
-        // }
-
-        // System.out.println(state);
         switch (state) {
             case AVANZO:
                 for (int i = 0; i < 2; i++) {
@@ -202,14 +185,12 @@ public class Agent implements MarioAgent {
                     }
                 }
                 break;
-
             case PLANTA:
                 action[MarioActions.RIGHT.getValue()] = false;
                 evalGene(6, mundo, scene, enemies, completo, model);
                 break;
 
         }
-
         return action;
     }
 
@@ -247,28 +228,24 @@ public class Agent implements MarioAgent {
             if (true) {
                 getStateByGene(gene);
             }
-        }
-        else if (gt.chromosome().get(gene).allele().equals(8)) {
+        } else if (gt.chromosome().get(gene).allele().equals(8)) {
             if (enemyBehind(enemies) || enemyInFront(enemies)) {
                 getStateByGene(gene);
             }
-        }
-        else if (gt.chromosome().get(gene).allele().equals(9)) {
+        } else if (gt.chromosome().get(gene).allele().equals(9)) {
             if (thereIsPlantFuera(completo) && enemyBehind(enemies)) {
                 getStateByGene(gene);
             }
-        }
-        else if (gt.chromosome().get(gene).allele().equals(10)) {
+        } else if (gt.chromosome().get(gene).allele().equals(10)) {
             if (((enemyInFront(enemies) && thereIsObstacle(scene) && thereIsHole(mundo)))) {
                 getStateByGene(gene);
             }
-        }
-        else if (gt.chromosome().get(gene).allele().equals(11)) {
+        } else if (gt.chromosome().get(gene).allele().equals(11)) {
             if (!enemyInFront(enemies) || !thereIsObstacle(scene) || !thereIsHole(mundo)) {
                 getStateByGene(gene);
             }
         }
-        
+
     }
 
     public int getRandomNumber(int min, int max) {
@@ -284,7 +261,6 @@ public class Agent implements MarioAgent {
             state = States.PLANTA;
         else if (gene == 5)
             state = States.AVANZO;
-
     }
 
     @Override

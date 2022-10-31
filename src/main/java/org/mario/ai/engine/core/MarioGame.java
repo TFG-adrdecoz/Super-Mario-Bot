@@ -10,6 +10,7 @@ import java.awt.event.KeyAdapter;
 import org.mario.ai.agents.human.Agent;
 import org.mario.ai.engine.helper.GameStatus;
 import org.mario.ai.engine.helper.MarioActions;
+import org.springframework.stereotype.Component;
 
 public class MarioGame {
     /**
@@ -245,6 +246,7 @@ public class MarioGame {
             for (int col = 0; col < 16; col++) {
                 for (int row = 0; row < 16; row++) {
                     JPanel cell = new JPanel();
+                    cell.setBackground(Color.WHITE);
                     add(cell);
                 }
             }
@@ -290,21 +292,18 @@ public class MarioGame {
             window.add(gridColor);
             window.add(metricas);
             window.add(grid);
-
             this.window.pack();
             this.window.setResizable(true);
             this.window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             this.render.init();
-
             this.window.setVisible(true);
         }
         this.setAgent(agent);
 
-        return this.gameLoop(level, timer, marioState, visuals, fps, metricas);
+        return this.gameLoop(level, timer, marioState, visuals, fps);
     }
 
-    private MarioResult gameLoop(String level, int timer, int marioState, boolean visual, int fps,
-            JEditorPane metricas) {
+    private MarioResult gameLoop(String level, int timer, int marioState, boolean visual, int fps) {
         this.world = new MarioWorld(this.killEvents);
         this.world.visuals = visual;
         this.world.initializeLevel(level, 1000 * timer);
@@ -376,10 +375,6 @@ public class MarioGame {
             }
         }
         MarioResult result = new MarioResult(this.world, gameEvents, agentEvents);
-        if (visual) {
-            updateGrid(world);
-            updateMetrics(result);
-        }
 
         return result;
     }
@@ -389,7 +384,7 @@ public class MarioGame {
                 "\nPercentage Completion: " + String.valueOf((int) Math.ceil(result.getCompletionPercentage() * 100))
                 + "%" + "\nLives: "
                 + String.valueOf(result.getCurrentLives()) + "\nCoins: " + String.valueOf(result.getCurrentCoins()) +
-                "\nRemaining Time: " + String.valueOf(result.getRemainingTime() / 1000) + "\nMario State: "
+                "\nRemaining Time: " + String.valueOf(result.getRemainingTime() / 1000) + " seconds\nMario State: "
                 + String.valueOf(result.getMarioMode()) +
                 "\nMushrooms: " + String.valueOf(result.getNumCollectedMushrooms()) + "\nFire Flowers: "
                 + String.valueOf(result.getNumCollectedFireflower()) + "\nTotal Kills: "
@@ -405,25 +400,31 @@ public class MarioGame {
 
     private void updateGrid(MarioWorld world) {
         int[][] scene = world.getMergedObservation(this.world.mario.x,
-                140, 1, 1);
+                140, 0, 0);     
         this.grid
-                .setText("\n\n\n" + Arrays.deepToString(transposeMatrix(scene)).replace("], ", "]\n").replace("0", "00")
-                        .replace("[", "").replace("]", ""));
+                .setText(" " + Arrays.deepToString(transposeMatrixString(scene)).replace("],",
+                        "\n")
+                        .replace("[", "").replace(",", "  | ").replace("]]", ""));
     }
 
     private void updateGridColor(MarioWorld world) {
         int[][] scene = world.getMergedObservation(this.world.mario.x,
                 140, 2, 2);
         int[][] transpose = transposeMatrix(scene);
+        Color newColor = Color.WHITE;
         for (int col = 0; col < transpose.length; col++) {
             for (int row = 0; row < transpose.length; row++) {
                 int value = transpose[col][row];
+                java.awt.Component component = this.gridColor.getComponent(row + 16 * col);
                 if (value == 100) {
-                    this.gridColor.getComponent(row + 16 * col).setBackground(new Color(139, 69, 19));
+                    newColor = new Color(139, 69, 19);
                 } else if (value == 1) {
-                    this.gridColor.getComponent(row + 16 * col).setBackground(Color.red);
+                    newColor = Color.red;
                 } else {
-                    this.gridColor.getComponent(row + 16 * col).setBackground(Color.WHITE);
+                    newColor = Color.WHITE;
+                }
+                if(!component.getBackground().equals(newColor)){
+                    component.setBackground(newColor);
                 }
             }
         }
@@ -437,10 +438,24 @@ public class MarioGame {
         }
     }
 
+    public static String[][] transposeMatrixString(int[][] matrix) {
+        int m = matrix.length;
+        int n = matrix[0].length;
+        String[][] transposedMatrix = new String[n][m];
+
+        for (int x = 0; x < n; x++) {
+            for (int y = 0; y < m; y++) {
+                String padded = String.format("%02d" , matrix[y][x]);
+                transposedMatrix[x][y] = padded;
+            }
+        }
+
+        return transposedMatrix;
+    }
+
     public static int[][] transposeMatrix(int[][] matrix) {
         int m = matrix.length;
         int n = matrix[0].length;
-
         int[][] transposedMatrix = new int[n][m];
 
         for (int x = 0; x < n; x++) {

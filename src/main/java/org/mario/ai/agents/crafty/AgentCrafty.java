@@ -43,7 +43,6 @@ public class AgentCrafty implements MarioAgent {
     private boolean enemyBehind(int[][] enemies) {
         for (int j = -1; j < 1; j++) {
             if (getLocation(j, 0, enemies) > 1) {
-                System.out.println("ENEMIGO DETRAS");
                 return true;
             }
         }
@@ -55,9 +54,6 @@ public class AgentCrafty implements MarioAgent {
         for (int i = 0; i > -2; i--) {
             for (int j = 1; j < 4; j++) {
                 if (getLocation(j, i, enemies) > 1) {
-                    // System.out.println("ENEMIGO CERCA");
-                    // action[MarioActions.SPEED.getValue()] = false;
-
                     return true;
                 }
             }
@@ -69,7 +65,6 @@ public class AgentCrafty implements MarioAgent {
         int[] inFrontOf = new int[] { mundo[14][9], mundo[14][10] };
         for (int i = 0; i < inFrontOf.length; i++) {
             if (inFrontOf[i] == 0) {
-                // System.out.println("HAY HOLE CERCA");
                 return true;
             }
         }
@@ -107,7 +102,6 @@ public class AgentCrafty implements MarioAgent {
                     || (inFrontOf4[i] == 0 && inFrontOf4[i + 1] == 8) || (inFrontOf5[i] == 0 && inFrontOf5[i + 1] == 8)
                     || (inFrontOf6[i] == 0 && inFrontOf6[i + 1] == 8)
                     || (inFrontOf7[i] == 0 && inFrontOf7[i + 1] == 8)) {
-                System.out.println("PLANTA FUERA");
                 action[MarioActions.RIGHT.getValue()] = false;
                 return true;
             }
@@ -133,7 +127,6 @@ public class AgentCrafty implements MarioAgent {
                     || (inFrontOf3[i] == 34 && inFrontOf3[i + 1] == 8)
                     || (inFrontOf4[i] == 34 && inFrontOf4[i + 1] == 8)
                     || (inFrontOf5[i] == 34 && inFrontOf5[i + 1] == 8)) {
-                System.out.println("PLANTA EN TUBO DENTRO");
                 return true;
             }
         }
@@ -147,7 +140,6 @@ public class AgentCrafty implements MarioAgent {
 
         for (int i = 0; i < inFrontOf.length; i++) {
             if (inFrontOf[i] == 17 || inFrontOf[i] == 23 || inFrontOf[i] == 24 || inFrontOf[i] == 34) {
-                // System.out.println("OBSTACULO CERCA");
                 return true;
             }
         }
@@ -161,12 +153,6 @@ public class AgentCrafty implements MarioAgent {
         int[][] scene = model.getMarioSceneObservation();
         int[][] enemies = model.getMarioEnemiesObservation();
         int[][] completo = model.getMarioCompleteObservation();
-        action[MarioActions.SPEED.getValue()] = true;
-        // System.out.println(Arrays.deepToString(completo).replace("], ",
-        // "]\n").replace("0", "00")
-        // .replace("[", "").replace("]", ""));
-        // System.out.println("------------------------------------------------------------------------");
-        // System.out.println(state);
         switch (state) {
             case AVANZO:
                 if ((enemyInFront(enemies) || thereIsObstacle(scene) || thereIsHole(mundo))
