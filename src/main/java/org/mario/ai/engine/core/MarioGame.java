@@ -384,7 +384,7 @@ public class MarioGame {
                 "\nPercentage Completion: " + String.valueOf((int) Math.ceil(result.getCompletionPercentage() * 100))
                 + "%" + "\nLives: "
                 + String.valueOf(result.getCurrentLives()) + "\nCoins: " + String.valueOf(result.getCurrentCoins()) +
-                "\nRemaining Time: " + String.valueOf(result.getRemainingTime() / 1000) + " seconds\nMario State: "
+                "\nRemaining Time: " + String.valueOf((int) Math.ceil(result.getRemainingTime() / 1000f)) + " seconds\nMario State: "
                 + String.valueOf(result.getMarioMode()) +
                 "\nMushrooms: " + String.valueOf(result.getNumCollectedMushrooms()) + "\nFire Flowers: "
                 + String.valueOf(result.getNumCollectedFireflower()) + "\nTotal Kills: "

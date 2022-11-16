@@ -117,7 +117,6 @@ public class Agent implements MarioAgent {
                     || (inFrontOf3[i] == 34 && inFrontOf3[i + 1] == 8)
                     || (inFrontOf4[i] == 34 && inFrontOf4[i + 1] == 8)
                     || (inFrontOf5[i] == 34 && inFrontOf5[i + 1] == 8)) {
-                // System.out.println("PLANTA EN TUBO DENTRO");
                 return true;
             }
         }
@@ -128,7 +127,6 @@ public class Agent implements MarioAgent {
     private boolean enemyBehind(int[][] enemies) {
         for (int j = -1; j < 1; j++) {
             if (getLocation(j, 0, enemies) > 1) {
-                // System.out.println("ENEMIGO DETRAS");
                 return true;
             }
         }
