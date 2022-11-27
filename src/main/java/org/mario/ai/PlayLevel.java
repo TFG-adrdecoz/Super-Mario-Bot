@@ -8,6 +8,8 @@ import org.mario.ai.engine.core.MarioGame;
 import org.mario.ai.engine.core.MarioResult;
 
 public class PlayLevel {
+    static int LEVEL = 1;
+
     public static void printResults(MarioResult result) {
         System.out.println("****************************************************************");
         System.out.println("Game Status: " + result.getGameStatus().toString() +
@@ -36,6 +38,6 @@ public class PlayLevel {
 
     public static void main(String[] args) {
         printResults(new MarioGame().runGame(new org.mario.ai.agents.crafty.AgentCrafty(),
-        PlayLevel.getLevel("./levels/original/lvl-2.txt"), 20, 0, true));
+        PlayLevel.getLevel("./levels/original/lvl-" + LEVEL + ".txt"), 20, 0, true));
     }
 }
